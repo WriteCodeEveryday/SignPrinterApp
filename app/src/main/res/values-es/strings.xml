@@ -15,8 +15,8 @@
     
     <string name="choose_printable_text">Elegir elemento imprimible</string>
     <string name="printer_settings_text">Configuración de la impresora</string>
-    <string name="printer_roll_option_text">Rollo (DK-2251 /DK-2205)</string>
-    <string name="printer_label_option_text">Etiqueta (DK-1201 /DK-1247)</string>
+    <string name="printer_roll_option_text">Rollo (DK-2251 / DK-2205 / A4)</string>
+    <string name="printer_label_option_text">Etiqueta (DK-1201 / DK-1247 / LETTER)</string>
     <string name="printer_status_text">No hay impresora conectada</string>
     <string name="create_printable_text">Por favor, introduzca lo siguiente</string>
     <string name="printable_name_text">Botón de texto</string>

@@ -15,8 +15,8 @@
     
     <string name="choose_printable_text">选择可打印项目</string>
     <string name="printer_settings_text">打印机设置设置</string>
-    <string name="printer_roll_option_text">卷（DK-2251 /DK-2205）</string>
-    <string name="printer_label_option_text">标签（DK-1201 /DK-1247）</string>
+    <string name="printer_roll_option_text">卷（DK-2251 / DK-2205 / A4）</string>
+    <string name="printer_label_option_text">标签（DK-1201 / DK-1247 / LETTER）</string>
     <string name="printer_status_text">未连接打印机</string>
     <string name="create_printable_text">请输入以下内容</string>
     <string name="printable_name_text">按钮文字</string>

@@ -15,8 +15,8 @@
     
     <string name="choose_printable_text">인쇄 가능한 항목을 선택하십시오</string>
     <string name="printer_settings_text">프린터 설정</string>
-    <string name="printer_roll_option_text">롤 (DK-2251 /DK-2205)</string>
-    <string name="printer_label_option_text">라벨 (DK-1201 /DK-1247)</string>
+    <string name="printer_roll_option_text">롤 (DK-2251 / DK-2205 / A4)</string>
+    <string name="printer_label_option_text">라벨 (DK-1201 / DK-1247 / LETTER)</string>
     <string name="printer_status_text">프린터가 연결되지 않았습니다</string>
     <string name="create_printable_text">다음을 입력하십시오</string>
     <string name="printable_name_text">버튼 텍스트</string>

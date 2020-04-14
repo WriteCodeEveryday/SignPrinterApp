@@ -7,10 +7,12 @@ import android.content.Context;
 import android.os.Build;
 
 import com.brother.ptouch.sdk.BLEPrinter;
+import com.brother.ptouch.sdk.CustomPaperInfo;
 import com.brother.ptouch.sdk.LabelInfo;
 import com.brother.ptouch.sdk.NetPrinter;
 import com.brother.ptouch.sdk.Printer;
 import com.brother.ptouch.sdk.PrinterInfo;
+import com.brother.ptouch.sdk.Unit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +23,9 @@ public class PrinterManager {
     public static enum CONNECTION { BLUETOOTH, WIFI, USB };
     private static String[] PRINTERS = new String[] { "QL-820NWB",
             "QL-1110NWB",
-            /*"RJ-4250WBL",
+            "RJ-4250WB",
             "PJ-763",
-            "PJ-773"*/ };
+            "PJ-773" };
 
     private static PrinterInfo.Model model;
     private static PrinterInfo info;
@@ -70,6 +72,17 @@ public class PrinterManager {
         return CONNECTION.values();
     }
 
+    private static void setRJCustomPaper() {
+        info.paperSize = PrinterInfo.PaperSize.CUSTOM;
+        info.printMode = PrinterInfo.PrintMode.FIT_TO_PAGE;
+        float width = 102.0f;
+        float margins = 0f;
+        CustomPaperInfo customPaperInfo = CustomPaperInfo.newCustomRollPaper(info.printerModel,
+                Unit.Mm, width, margins, margins, margins);
+        info.setCustomPaperInfo(customPaperInfo);
+
+    }
+
     public static void loadLabel() {
         printerMode = "label";
         switch (printerModel) {
@@ -85,6 +98,18 @@ public class PrinterManager {
                 info.printMode = PrinterInfo.PrintMode.FIT_TO_PAGE;
                 info.isAutoCut = true;
                 break;
+            case "RJ-4250WB":
+            case "RJ_4250WB":
+                setRJCustomPaper();
+                break;
+            case "PJ-763":
+            case "PJ_763":
+            case "PJ-773":
+            case "PJ_773":
+                info.paperSize = PrinterInfo.PaperSize.LETTER;
+                info.printMode = PrinterInfo.PrintMode.FIT_TO_PAGE;
+                break;
+
         }
         printer.setPrinterInfo(info);
     }
@@ -104,6 +129,17 @@ public class PrinterManager {
                 info.labelNameIndex = LabelInfo.QL1100.W62.ordinal();
                 info.printMode = PrinterInfo.PrintMode.FIT_TO_PAGE;
                 info.isAutoCut = true;
+                break;
+            case "RJ-4250WB":
+            case "RJ_4250WB":
+                setRJCustomPaper();
+                break;
+            case "PJ-763":
+            case "PJ_763":
+            case "PJ-773":
+            case "PJ_773":
+                info.paperSize = PrinterInfo.PaperSize.A4;
+                info.printMode = PrinterInfo.PrintMode.FIT_TO_PAGE;
                 break;
         }
         printer.setPrinterInfo(info);
