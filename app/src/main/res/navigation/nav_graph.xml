@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/SelectPrintableFragment">
+
+    <fragment
+        android:id="@+id/SelectPrintableFragment"
+        android:name="com.challenge.mandatehelper.SelectPrintableFragment"
+        android:label="@string/choose_printable_fragment"
+        tools:layout="@layout/select_printable_fragment">
+
+        <action
+            android:id="@+id/action_PrintItem"
+            app:destination="@id/PrintPrintableFragment" />
+
+        <action
+            android:id="@+id/action_CreateItem"
+            app:destination="@id/CreatePrintableFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/CreatePrintableFragment"
+        android:name="com.challenge.mandatehelper.CreatePrintableFragment"
+        android:label="@string/create_printable_fragment"
+        tools:layout="@layout/create_printable_fragment">
+
+        <action
+            android:id="@+id/action_CancelPrint"
+            app:destination="@id/SelectPrintableFragment" />
+        <action
+            android:id="@+id/action_PrintItem"
+            app:destination="@id/PrintPrintableFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/PrintPrintableFragment"
+        android:name="com.challenge.mandatehelper.PrintPrintableFragment"
+        android:label="@string/print_printable_fragment"
+        tools:layout="@layout/print_printable_fragment">
+
+        <action
+            android:id="@+id/action_CancelPrint"
+            app:destination="@id/SelectPrintableFragment" />
+
+        <action
+            android:id="@+id/action_EditPrint"
+            app:destination="@id/CreatePrintableFragment" />
+    </fragment>
+</navigation>
