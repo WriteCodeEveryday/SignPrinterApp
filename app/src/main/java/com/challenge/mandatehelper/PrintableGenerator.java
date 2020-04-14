@@ -41,7 +41,7 @@ public class PrintableGenerator {
 
         //Paints for text and background
         Paint text = new Paint(Paint.ANTI_ALIAS_FLAG);
-        if (PrinterManager.getMode().equals("roll")) {
+        if (PrinterManager.getMode().equals("roll") && PrinterManager.getModel().contains("QL")) {
             text.setColor(Color.RED);
         } else {
             text.setColor(Color.BLACK);
