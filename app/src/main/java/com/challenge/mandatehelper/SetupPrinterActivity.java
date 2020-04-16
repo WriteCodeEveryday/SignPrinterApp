@@ -95,10 +95,10 @@ public class SetupPrinterActivity extends Activity {
             final RadioButton roll = this.findViewById(R.id.radio_option_roll);
 
             final String[] options = PrinterManager.getLabelRoll();
-            if (options.length == 2){
-                this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+            this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (options.length == 2){
                         String newText = "" + label.getText();
                         newText = newText.split("\\(",-2)[0];
                         newText += "(" + options[0] + ")";
@@ -108,14 +108,14 @@ public class SetupPrinterActivity extends Activity {
                         newText = newText.split("\\(",-2)[0];
                         newText += "(" + options[1] + ")";
                         roll.setText(newText);
-                    }
-                });
-            }
 
-            label.setVisibility(View.VISIBLE);
-            roll.setVisibility(View.VISIBLE);
-            label.setEnabled(true);
-            roll.setEnabled(true);
+                        label.setVisibility(View.VISIBLE);
+                        roll.setVisibility(View.VISIBLE);
+                        label.setEnabled(true);
+                        roll.setEnabled(true);
+                    }
+                }
+            });
 
             PrinterManager.CONNECTION conn = PrinterManager.getConnection();
             String model = PrinterManager.getModel();
@@ -178,32 +178,37 @@ public class SetupPrinterActivity extends Activity {
         this.findViewById(R.id.printer_connect_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                String currentModel = PrinterManager.getModel();
-                PrinterManager.CONNECTION currentConnection = PrinterManager.getConnection();
+                new Thread() {
+                    @Override
+                    public void run() {
+                        String currentModel = PrinterManager.getModel();
+                        PrinterManager.CONNECTION currentConnection = PrinterManager.getConnection();
 
-                if (currentConnection == null || currentModel == null) {
-                    return;
-                }
-
-                if (PrinterManager.getConnection().equals(PrinterManager.CONNECTION.BLUETOOTH)) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
-                    }
-
-                    BluetoothAdapter bluetoothAdapter = BluetoothAdapter
-                            .getDefaultAdapter();
-                    if (bluetoothAdapter != null) {
-                        if (!bluetoothAdapter.isEnabled()) {
-                            Intent enableBtIntent = new Intent(
-                                    BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                            enableBtIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(enableBtIntent);
+                        if (currentConnection == null || currentModel == null) {
+                            return;
                         }
-                    }
-                }
 
-                PrinterManager.findPrinter(PrinterManager.getModel(), PrinterManager.getConnection());
-                updateStatus();
+                        if (PrinterManager.getConnection().equals(PrinterManager.CONNECTION.BLUETOOTH)) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+                            }
+
+                            BluetoothAdapter bluetoothAdapter = BluetoothAdapter
+                                    .getDefaultAdapter();
+                            if (bluetoothAdapter != null) {
+                                if (!bluetoothAdapter.isEnabled()) {
+                                    Intent enableBtIntent = new Intent(
+                                            BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                                    enableBtIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(enableBtIntent);
+                                }
+                            }
+                        }
+
+                        PrinterManager.findPrinter(PrinterManager.getModel(), PrinterManager.getConnection());
+                        updateStatus();
+                    }
+                }.start();
             }
         });
 

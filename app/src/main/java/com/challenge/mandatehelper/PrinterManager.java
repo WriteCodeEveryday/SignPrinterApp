@@ -246,10 +246,8 @@ public class PrinterManager {
                 for (int i = 0; i < PRINTERS.length; i++) {
                     String name = "Brother " + PRINTERS[i];
                     NetPrinter[] printerList = printer.getNetPrinters(name);
-                    System.out.println("NET: " + name + "?");
                     for (NetPrinter printer: printerList) {
-                        System.out.println("NET: " + printer.modelName);
-                        model = PrinterInfo.Model.valueOf(printer.modelName);
+                        model = PrinterInfo.Model.valueOf(dashToLower(printer.modelName).split("Brother ")[1]);
                         printerModel = lowerToDash(model.toString());
                         info.printerModel = model;
                         info.port = PrinterInfo.Port.NET;
