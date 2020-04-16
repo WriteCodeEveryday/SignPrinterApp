@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -41,6 +42,7 @@ public class SetupPrinterActivity extends Activity {
                 public void onClick(View v) {
                     if (!v.isSelected()) {
                         PrinterManager.setConnection(supportedConnections[j]);
+                        resetStatus();
                     }
                 }
             });
@@ -60,6 +62,7 @@ public class SetupPrinterActivity extends Activity {
                 public void onClick(View v) {
                     if (!v.isSelected()) {
                         PrinterManager.setModel(supportedModels[j]);
+                        resetStatus();
                     }
                 }
             });
@@ -81,10 +84,38 @@ public class SetupPrinterActivity extends Activity {
         }
     }
 
+    private void resetStatus() {
+        TextView status = this.findViewById(R.id.printer_status_text);
+        status.setText(R.string.printer_status_text);
+    }
+
     private void updateStatus() {
         if (PrinterManager.getPrinter() != null) {
-            this.findViewById(R.id.radio_option_label).setEnabled(true);
-            this.findViewById(R.id.radio_option_roll).setEnabled(true);
+            final RadioButton label = this.findViewById(R.id.radio_option_label);
+            final RadioButton roll = this.findViewById(R.id.radio_option_roll);
+
+            final String[] options = PrinterManager.getLabelRoll();
+            if (options.length == 2){
+                this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String newText = "" + label.getText();
+                        newText = newText.split("\\(",-2)[0];
+                        newText += "(" + options[0] + ")";
+                        label.setText(newText);
+
+                        newText = "" + roll.getText();
+                        newText = newText.split("\\(",-2)[0];
+                        newText += "(" + options[1] + ")";
+                        roll.setText(newText);
+                    }
+                });
+            }
+
+            label.setVisibility(View.VISIBLE);
+            roll.setVisibility(View.VISIBLE);
+            label.setEnabled(true);
+            roll.setEnabled(true);
 
             PrinterManager.CONNECTION conn = PrinterManager.getConnection();
             String model = PrinterManager.getModel();
@@ -111,13 +142,13 @@ public class SetupPrinterActivity extends Activity {
         }
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.setup_printer_activity);
 
         updateStatus();
-
         this.findViewById(R.id.radio_option_label).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
@@ -143,8 +174,6 @@ public class SetupPrinterActivity extends Activity {
                 }.start();
             }
         });
-
-        //this.findViewById(R.id.printer_connect_button).setEnabled(false);
 
         this.findViewById(R.id.printer_connect_button).setOnClickListener(new View.OnClickListener() {
             @Override

@@ -15,6 +15,7 @@ import com.brother.ptouch.sdk.PrinterInfo;
 import com.brother.ptouch.sdk.Unit;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -26,6 +27,18 @@ public class PrinterManager {
             "RJ-4250WB",
             "PJ-763",
             "PJ-773" };
+
+    private static String[] LABELS = new String[] {
+            "DK-2251",
+            "DK-2205",
+            "RD-M01E5",
+            "A4", "A4" };
+
+    private static String[] ROLLS = new String[] {
+            "DK-1201",
+            "DK-1247",
+            "RD-M03E1",
+            "LETTER", "LETTER" };
 
     private static PrinterInfo.Model model;
     private static PrinterInfo info;
@@ -70,6 +83,15 @@ public class PrinterManager {
 
     public static CONNECTION[] getSupportedConnections() {
         return CONNECTION.values();
+    }
+
+    public static String[] getLabelRoll() {
+        if (printerModel != null) {
+            for (int i = 0; i < PRINTERS.length; i++)
+                if (PRINTERS[i].equals(printerModel))
+                    return new String[] { LABELS[i], ROLLS[i]};
+        }
+        return new String[]{};
     }
 
     private static void setRJCustomPaper() {
@@ -187,6 +209,7 @@ public class PrinterManager {
 
                 List<BluetoothDevice> pairedDevices = getPairedBluetoothDevice(bluetoothAdapter);
                 for (BluetoothDevice device : pairedDevices) {
+                    System.out.println("Bluetooth: " + device.getName());
                     for (int i = 0; i < PRINTERS.length; i++) {
                         if (device.getName().contains((PRINTERS[i]))) {
                             model = PrinterInfo.Model.valueOf(dashToLower(PRINTERS[i]));
@@ -203,8 +226,8 @@ public class PrinterManager {
 
                 List<BLEPrinter> bleList = printer.getBLEPrinters(BluetoothAdapter.getDefaultAdapter(), 30);
                 for (BLEPrinter printer: bleList) {
+                    System.out.println("BLE: " + printer.localName);
                     for (int i = 0; i < PRINTERS.length; i++) {
-                        System.out.println("BLE: " + printer.localName);
                         if (printer.localName.contains(PRINTERS[i])) {
                             model = PrinterInfo.Model.valueOf(dashToLower(PRINTERS[i]));
                             printerModel = lowerToDash(model.toString());
@@ -221,7 +244,9 @@ public class PrinterManager {
                 return;
             case WIFI:
                 for (int i = 0; i < PRINTERS.length; i++) {
-                    NetPrinter[] printerList = printer.getNetPrinters(PRINTERS[i]);
+                    String name = "Brother " + PRINTERS[i];
+                    NetPrinter[] printerList = printer.getNetPrinters(name);
+                    System.out.println("NET: " + name + "?");
                     for (NetPrinter printer: printerList) {
                         System.out.println("NET: " + printer.modelName);
                         model = PrinterInfo.Model.valueOf(printer.modelName);

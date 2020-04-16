@@ -13,8 +13,8 @@
     <!-- Values for Labels -->
     <string name="choose_printable_text">Choose Printable Item</string>
     <string name="printer_settings_text">Printer Setup Settings</string>
-    <string name="printer_roll_option_text">Roll (DK-2251 / DK-2205 / A4)</string>
-    <string name="printer_label_option_text">Label (DK-1201 / DK-1247 / LETTER)</string>
+    <string name="printer_roll_option_text">Roll (DK-2251 / DK-2205 / RD-M01E5 / A4)</string>
+    <string name="printer_label_option_text">Label (DK-1201 / DK-1247 / RD-M03E1 / LETTER)</string>
     <string name="printer_status_text">No Printer Connected</string>
     <string name="create_printable_text">Please Enter the Following</string>
     <string name="printable_name_text">Button Text</string>
