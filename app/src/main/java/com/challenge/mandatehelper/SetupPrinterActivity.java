@@ -29,6 +29,8 @@ public class SetupPrinterActivity extends Activity {
         RadioGroup connectors = this.findViewById(R.id.connection_selection_group);
         RadioGroup printers = this.findViewById(R.id.printer_selection_group);
 
+
+        connectors.removeAllViews();
         for (int i = 0; i < supportedConnections.length; i++) {
             RadioButton button = new RadioButton(this);
             if (currentConnection != null) {
@@ -49,6 +51,7 @@ public class SetupPrinterActivity extends Activity {
             connectors.addView(button);
         }
 
+        printers.removeAllViews();
         for (int i = 0; i < supportedModels.length; i++) {
             RadioButton button = new RadioButton(this);
             if (currentModel != null) {
@@ -87,6 +90,11 @@ public class SetupPrinterActivity extends Activity {
     private void resetStatus() {
         TextView status = this.findViewById(R.id.printer_status_text);
         status.setText(R.string.printer_status_text);
+
+        RadioButton label = this.findViewById(R.id.radio_option_label);
+        RadioButton roll = this.findViewById(R.id.radio_option_roll);
+        label.setVisibility(View.GONE);
+        roll.setVisibility(View.GONE);
     }
 
     private void updateStatus() {
@@ -98,6 +106,7 @@ public class SetupPrinterActivity extends Activity {
             this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    setUpPrinterOptions();
                     if (options.length == 2){
                         String newText = "" + label.getText();
                         newText = newText.split("\\(",-2)[0];
