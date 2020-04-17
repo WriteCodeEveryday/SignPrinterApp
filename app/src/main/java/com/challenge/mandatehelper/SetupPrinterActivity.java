@@ -6,14 +6,10 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-
-import com.brother.ptouch.sdk.LabelInfo;
-import com.brother.ptouch.sdk.Printer;
 
 
 
@@ -21,7 +17,6 @@ public class SetupPrinterActivity extends Activity {
     private void setUpPrinterOptions() {
         String currentModel = PrinterManager.getModel();
         PrinterManager.CONNECTION currentConnection = PrinterManager.getConnection();
-        String currentMode = PrinterManager.getMode();
 
         final String[] supportedModels = PrinterManager.getSupportedModels();
         final PrinterManager.CONNECTION[] supportedConnections = PrinterManager.getSupportedConnections();
@@ -65,6 +60,8 @@ public class SetupPrinterActivity extends Activity {
                 public void onClick(View v) {
                     if (!v.isSelected()) {
                         PrinterManager.setModel(supportedModels[j]);
+                        PrinterManager.setConnection(null);
+                        setUpPrinterOptions();
                         resetStatus();
                     }
                 }
@@ -72,6 +69,7 @@ public class SetupPrinterActivity extends Activity {
             printers.addView(button);
         }
 
+        String currentMode = PrinterManager.getMode();
         if (currentMode != null) {
             RadioButton label = this.findViewById(R.id.radio_option_label);
             RadioButton roll = this.findViewById(R.id.radio_option_roll);
@@ -95,6 +93,40 @@ public class SetupPrinterActivity extends Activity {
         RadioButton roll = this.findViewById(R.id.radio_option_roll);
         label.setVisibility(View.GONE);
         roll.setVisibility(View.GONE);
+
+        if (PrinterManager.getModel() != null && PrinterManager.getConnection() != null) {
+            new Thread() {
+                @Override
+                public void run() {
+                    String currentModel = PrinterManager.getModel();
+                    PrinterManager.CONNECTION currentConnection = PrinterManager.getConnection();
+
+                    if (currentConnection == null || currentModel == null) {
+                        return;
+                    }
+
+                    if (PrinterManager.getConnection().equals(PrinterManager.CONNECTION.BLUETOOTH)) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+                        }
+
+                        BluetoothAdapter bluetoothAdapter = BluetoothAdapter
+                                .getDefaultAdapter();
+                        if (bluetoothAdapter != null) {
+                            if (!bluetoothAdapter.isEnabled()) {
+                                Intent enableBtIntent = new Intent(
+                                        BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                                enableBtIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(enableBtIntent);
+                            }
+                        }
+                    }
+
+                    PrinterManager.findPrinter(PrinterManager.getModel(), PrinterManager.getConnection());
+                    updateStatus();
+                }
+            }.start();
+        }
     }
 
     private void updateStatus() {
@@ -166,6 +198,7 @@ public class SetupPrinterActivity extends Activity {
                     public void run() {
                         PrinterManager.loadLabel();
                         updateStatus();
+                        finish();
                     }
                 }.start();
             }
@@ -179,52 +212,9 @@ public class SetupPrinterActivity extends Activity {
                     public void run() {
                         PrinterManager.loadRoll();
                         updateStatus();
+                        finish();
                     }
                 }.start();
-            }
-        });
-
-        this.findViewById(R.id.printer_connect_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        String currentModel = PrinterManager.getModel();
-                        PrinterManager.CONNECTION currentConnection = PrinterManager.getConnection();
-
-                        if (currentConnection == null || currentModel == null) {
-                            return;
-                        }
-
-                        if (PrinterManager.getConnection().equals(PrinterManager.CONNECTION.BLUETOOTH)) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
-                            }
-
-                            BluetoothAdapter bluetoothAdapter = BluetoothAdapter
-                                    .getDefaultAdapter();
-                            if (bluetoothAdapter != null) {
-                                if (!bluetoothAdapter.isEnabled()) {
-                                    Intent enableBtIntent = new Intent(
-                                            BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                                    enableBtIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    startActivity(enableBtIntent);
-                                }
-                            }
-                        }
-
-                        PrinterManager.findPrinter(PrinterManager.getModel(), PrinterManager.getConnection());
-                        updateStatus();
-                    }
-                }.start();
-            }
-        });
-
-        this.findViewById(R.id.printer_cancel_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
             }
         });
 

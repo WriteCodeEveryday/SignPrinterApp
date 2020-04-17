@@ -1,10 +1,12 @@
 package com.challenge.mandatehelper;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.os.Build;
+import android.widget.Toast;
 
 import com.brother.ptouch.sdk.BLEPrinter;
 import com.brother.ptouch.sdk.CustomPaperInfo;
@@ -26,19 +28,20 @@ public class PrinterManager {
             "QL-1110NWB",
             "RJ-4250WB",
             "PJ-763",
+            "PJ-763MFi",
             "PJ-773" };
 
     private static String[] ROLLS = new String[] {
             "DK-2251",
             "DK-2205",
             "RD-M01E5",
-            "A4", "A4" };
+            "A4", "A4", "A4" };
 
     private static String[] LABELS = new String[] {
             "DK-1201",
             "DK-1247",
             "RD-M03E1",
-            "LETTER", "LETTER" };
+            "LETTER","LETTER", "LETTER" };
 
     private static PrinterInfo.Model model;
     private static PrinterInfo info;
@@ -50,11 +53,10 @@ public class PrinterManager {
 
 
     private static boolean done = true;
+    private static boolean toast = true;
 
     private PrinterManager() {
-        if (getPrinter() == null) {
-            findPrinter(PRINTERS[0], CONNECTION.WIFI);
-        }
+        // No constructor
     }
 
     public static Printer getPrinter() {
@@ -133,6 +135,8 @@ public class PrinterManager {
                 break;
             case "PJ-763":
             case "PJ_763":
+            case "PJ-763MFi":
+            case "PJ_763MFi":
             case "PJ-773":
             case "PJ_773":
                 info.paperSize = PrinterInfo.PaperSize.LETTER;
@@ -165,6 +169,8 @@ public class PrinterManager {
                 break;
             case "PJ-763":
             case "PJ_763":
+            case "PJ-763MFi":
+            case "PJ_763MFi":
             case "PJ-773":
             case "PJ_773":
                 info.paperSize = PrinterInfo.PaperSize.A4;
@@ -216,7 +222,7 @@ public class PrinterManager {
 
                 List<BluetoothDevice> pairedDevices = getPairedBluetoothDevice(bluetoothAdapter);
                 for (BluetoothDevice device : pairedDevices) {
-                    System.out.println("Fallback Bluetooth: " + printerModel + " " + device.getName());
+                    toastIt("Direct Bluetooth: " + printerModel + " " + device.getName());
                     if (device.getName().contains(printerModel)) {
                         model = PrinterInfo.Model.valueOf(dashToLower(printerModel));
                         printer.setBluetooth(BluetoothAdapter.getDefaultAdapter());
@@ -230,7 +236,7 @@ public class PrinterManager {
 
                 List<BLEPrinter> bleList = printer.getBLEPrinters(BluetoothAdapter.getDefaultAdapter(), 30);
                 for (BLEPrinter printer: bleList) {
-                    System.out.println("Direct BLE: " + printerModel + " " + printer.localName);
+                    toastIt("Direct BLE: " + printerModel + " " + printer.localName);
                     if (printer.localName.contains(printerModel)) {
                         model = PrinterInfo.Model.valueOf(dashToLower(printerModel));
                         info.port = PrinterInfo.Port.BLE;
@@ -242,7 +248,7 @@ public class PrinterManager {
 
                 for (BluetoothDevice device : pairedDevices) {
                     for (int i = 0; i < PRINTERS.length; i++) {
-                        System.out.println("Fallback Bluetooth: " + PRINTERS[i] + " " + device.getName());
+                        toastIt("Fallback Bluetooth: " + PRINTERS[i] + " " + device.getName());
                         if (device.getName().contains((PRINTERS[i]))) {
                             model = PrinterInfo.Model.valueOf(dashToLower(PRINTERS[i]));
                             printer.setBluetooth(BluetoothAdapter.getDefaultAdapter());
@@ -258,7 +264,7 @@ public class PrinterManager {
 
                 for (BLEPrinter printer: bleList) {
                     for (int i = 0; i < PRINTERS.length; i++) {
-                        System.out.println("Direct BLE: " + PRINTERS[i] + " " + printer.localName);
+                        toastIt("Fallback BLE: " + PRINTERS[i] + " " + printer.localName);
                         if (printer.localName.contains(PRINTERS[i])) {
                             model = PrinterInfo.Model.valueOf(dashToLower(PRINTERS[i]));
                             printerModel = lowerToDash(model.toString());
@@ -275,7 +281,7 @@ public class PrinterManager {
                 return;
             case WIFI:
                 String name = "Brother " + printerModel;
-                System.out.println("Direct WiFi: " + name);
+                toastIt("Direct WiFi: " + name);
                 NetPrinter[] printerList = printer.getNetPrinters(name);
                 for (NetPrinter printer: printerList) {
                     model = PrinterInfo.Model.valueOf(dashToLower(printer.modelName).split("Brother ")[1]);
@@ -288,7 +294,7 @@ public class PrinterManager {
                 }
                 for (int i = 0; i < PRINTERS.length; i++) {
                     name = "Brother " + PRINTERS[i];
-                    System.out.println("Fallback WiFi: " + name);
+                    toastIt("Fallback WiFi: " + name);
                     printerList = printer.getNetPrinters(name);
                     for (NetPrinter printer: printerList) {
                         model = PrinterInfo.Model.valueOf(dashToLower(printer.modelName).split("Brother ")[1]);
@@ -304,15 +310,21 @@ public class PrinterManager {
                 done = true;
                 return;
             case USB:
-                System.out.println("USB: YOLO");
+                toastIt("USB: YOLO");
                 info.port = PrinterInfo.Port.USB; // YOLO. USB-printers?
                 done = true;
                 return;
             default:
-                System.out.println("Default Case");
+                toastIt("Default Case");
                 printer = null; // Error, add nothing.
                 done = true;
                 return;
+        }
+    }
+
+    private static void toastIt(String s) {
+        if (toast) {
+           System.out.println(s);
         }
     }
 
