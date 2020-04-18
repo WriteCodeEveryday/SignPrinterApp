@@ -8,8 +8,8 @@ android {
         applicationId "com.challenge.mandatehelper"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 6
-        versionName "6.0-ALPHA"
+        versionCode 7
+        versionName "7.0-ALPHA"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
