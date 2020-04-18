@@ -32,16 +32,18 @@ public class PrintableGenerator {
         }
         // resource bitmaps are imutable,
         // so we need to convert it to mutable one
-        bitmap = bitmap.copy(bitmapConfig, true);
+        Bitmap rotatedBitmap = bitmap.copy(bitmapConfig, true);
 
-        // Matrixes for rotations.
-        Matrix rotate = new Matrix();
-        rotate.postRotate(90);
+        boolean rotated = bitmap.getHeight() > bitmap.getWidth();
+        int textCodeDimension = Math.max(bitmap.getWidth(), bitmap.getHeight());
 
-        Matrix counter = new Matrix();
-        counter.postRotate(270);
+        if (rotated) {
+            // Matrixes for rotations.
+            Matrix rotate = new Matrix();
+            rotate.postRotate(90);
 
-        Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotate, true);
+            rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotate, true);
+        }
 
         //Paints for text and background
         Paint text = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -50,7 +52,7 @@ public class PrintableGenerator {
         } else {
             text.setColor(Color.BLACK);
         }
-        text.setTextSize((int) bitmap.getHeight() / 16);
+        text.setTextSize((int) textCodeDimension / 16);
 
         Paint bg = new Paint(Paint.ANTI_ALIAS_FLAG);
         bg.setStyle(Paint.Style.FILL);
@@ -71,7 +73,7 @@ public class PrintableGenerator {
             canvas.drawText(outputs[1], x * scale, y * scale, text);
 
             // draw text slight above Canvas center
-            text.setTextSize((int) bitmap.getHeight() / 14);
+            text.setTextSize((int) textCodeDimension / 14);
 
             text.getTextBounds(outputs[2], 0, outputs[2].length(), bounds);
             x = (rotatedBitmap.getWidth() - bounds.width())/6;
@@ -88,7 +90,7 @@ public class PrintableGenerator {
             canvas.drawText(outputs[1], x * scale, y * scale, text);
 
             // draw text slight above Canvas center
-            text.setTextSize((int) bitmap.getHeight() / 14);
+            text.setTextSize((int) textCodeDimension / 14);
 
             int initX = 6;
             float initY = 6f;
@@ -111,7 +113,12 @@ public class PrintableGenerator {
         }
 
 
-        return Bitmap.createBitmap(rotatedBitmap, 0, 0, rotatedBitmap.getWidth(), rotatedBitmap.getHeight(), counter, true);
+        if (rotated) {
+            Matrix counter = new Matrix();
+            counter.postRotate(270);
+            rotatedBitmap = Bitmap.createBitmap(rotatedBitmap, 0, 0, rotatedBitmap.getWidth(), rotatedBitmap.getHeight(), counter, true);
+        }
+        return  rotatedBitmap;
     }
 
     private Rect generateBackground(Rect bounds, int x, int y, int scale) {

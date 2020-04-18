@@ -140,15 +140,8 @@ public class SetupPrinterActivity extends Activity {
                 public void run() {
                     setUpPrinterOptions();
                     if (options.length == 2){
-                        String newText = "" + label.getText();
-                        newText = newText.split("\\(",-2)[0];
-                        newText += "(" + options[0] + ")";
-                        label.setText(newText);
-
-                        newText = "" + roll.getText();
-                        newText = newText.split("\\(",-2)[0];
-                        newText += "(" + options[1] + ")";
-                        roll.setText(newText);
+                        label.setText(options[0]);
+                        roll.setText(options[1]);
 
                         label.setVisibility(View.VISIBLE);
                         roll.setVisibility(View.VISIBLE);

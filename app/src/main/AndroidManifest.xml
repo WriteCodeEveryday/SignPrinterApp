@@ -25,7 +25,9 @@
         <activity
             android:name=".SetupPrinterActivity"
             android:label="@string/printer_setup_fragment"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
