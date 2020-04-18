@@ -54,6 +54,7 @@ public class PrintableItems {
             add(replaced); // If we can't find it, push it.
         } else {
             options.set(index, replaced);
+            setSelected(index);
         }
     }
 }

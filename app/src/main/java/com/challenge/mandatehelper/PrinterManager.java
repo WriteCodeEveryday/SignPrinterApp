@@ -7,10 +7,12 @@ import android.content.Context;
 import android.os.Build;
 
 import com.brother.ptouch.sdk.BLEPrinter;
+import com.brother.ptouch.sdk.CustomPaperInfo;
 import com.brother.ptouch.sdk.LabelInfo;
 import com.brother.ptouch.sdk.NetPrinter;
 import com.brother.ptouch.sdk.Printer;
 import com.brother.ptouch.sdk.PrinterInfo;
+import com.brother.ptouch.sdk.Unit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +23,25 @@ public class PrinterManager {
     public static enum CONNECTION { BLUETOOTH, WIFI, USB };
     private static String[] PRINTERS = new String[] { "QL-820NWB",
             "QL-1110NWB",
-            /*"RJ-4250WBL",
+            "RJ-2150",
+            "RJ-4250WB",
             "PJ-763",
-            "PJ-773"*/ };
+            "PJ-763MFi",
+            "PJ-773" };
+
+    private static String[] ROLLS = new String[] {
+            "DK-2251",
+            "DK-2205",
+            "RDQ03U1",
+            "RD-M01E5",
+            "A4", "A4", "A4" };
+
+    private static String[] LABELS = new String[] {
+            "DK-1201",
+            "DK-1247",
+            "RDQ01U1",
+            "RD-M03E1",
+            "LETTER","LETTER", "LETTER" };
 
     private static PrinterInfo.Model model;
     private static PrinterInfo info;
@@ -35,11 +53,10 @@ public class PrinterManager {
 
 
     private static boolean done = true;
+    private static boolean toast = true;
 
     private PrinterManager() {
-        if (getPrinter() == null) {
-            findPrinter(PRINTERS[0], CONNECTION.WIFI);
-        }
+        // No constructor
     }
 
     public static Printer getPrinter() {
@@ -70,6 +87,52 @@ public class PrinterManager {
         return CONNECTION.values();
     }
 
+    public static String[] getLabelRoll() {
+        if (printerModel != null) {
+            for (int i = 0; i < PRINTERS.length; i++)
+                if (PRINTERS[i].equals(printerModel))
+                    return new String[] { LABELS[i], ROLLS[i]};
+        }
+        return new String[]{};
+    }
+
+    private static void setRJ2150Paper(boolean hasHeight) {
+        info.paperSize = PrinterInfo.PaperSize.CUSTOM;
+        info.printMode = PrinterInfo.PrintMode.FIT_TO_PAGE;
+        float width = 58.0f;
+        float margins = 0f;
+        float height;
+
+        if (hasHeight) {
+           height = 116.0f;
+        } else {
+            height = 29.0f;
+        }
+
+        CustomPaperInfo customPaperInfo = CustomPaperInfo.newCustomDiaCutPaper(info.printerModel,
+                Unit.Mm, width, height, margins, margins, margins, margins, 0);
+        info.setCustomPaperInfo(customPaperInfo);
+
+    }
+
+    private static void setRJ4250Paper(boolean hasHeight) {
+        info.paperSize = PrinterInfo.PaperSize.CUSTOM;
+        info.printMode = PrinterInfo.PrintMode.FIT_TO_PAGE;
+        float width = 102.0f;
+        float margins = 0f;
+        CustomPaperInfo customPaperInfo;
+        if (hasHeight) {
+            float height = 152.0f;
+            customPaperInfo = CustomPaperInfo.newCustomDiaCutPaper(info.printerModel,
+                    Unit.Mm, width, height, margins, margins, margins, margins, 0);
+        } else {
+            customPaperInfo = CustomPaperInfo.newCustomRollPaper(info.printerModel,
+                    Unit.Mm, width, margins, margins, margins);
+        }
+        info.setCustomPaperInfo(customPaperInfo);
+
+    }
+
     public static void loadLabel() {
         printerMode = "label";
         switch (printerModel) {
@@ -85,7 +148,26 @@ public class PrinterManager {
                 info.printMode = PrinterInfo.PrintMode.FIT_TO_PAGE;
                 info.isAutoCut = true;
                 break;
+            case "RJ-2150":
+            case "RJ_2150":
+                setRJ2150Paper(false);
+                break;
+            case "RJ-4250WB":
+            case "RJ_4250WB":
+                setRJ4250Paper(true);
+                break;
+            case "PJ-763":
+            case "PJ_763":
+            case "PJ-763MFi":
+            case "PJ_763MFi":
+            case "PJ-773":
+            case "PJ_773":
+                info.paperSize = PrinterInfo.PaperSize.LETTER;
+                info.printMode = PrinterInfo.PrintMode.FIT_TO_PAGE;
+                break;
+
         }
+        toastIt("Load " + printerMode + " " + info.labelNameIndex + " " + info.paperSize);
         printer.setPrinterInfo(info);
     }
 
@@ -105,7 +187,25 @@ public class PrinterManager {
                 info.printMode = PrinterInfo.PrintMode.FIT_TO_PAGE;
                 info.isAutoCut = true;
                 break;
+            case "RJ-2150":
+            case "RJ_2150":
+                setRJ2150Paper(true);
+                break;
+            case "RJ-4250WB":
+            case "RJ_4250WB":
+                setRJ4250Paper(false);
+                break;
+            case "PJ-763":
+            case "PJ_763":
+            case "PJ-763MFi":
+            case "PJ_763MFi":
+            case "PJ-773":
+            case "PJ_773":
+                info.paperSize = PrinterInfo.PaperSize.A4;
+                info.printMode = PrinterInfo.PrintMode.FIT_TO_PAGE;
+                break;
         }
+        toastIt("Load " + printerMode + " " + info.labelNameIndex + " " + info.paperSize);
         printer.setPrinterInfo(info);
     }
 
@@ -137,6 +237,19 @@ public class PrinterManager {
         printer = new Printer();
         info = printer.getPrinterInfo();
 
+        if (printerMode != null) {
+            toastIt("Reloading " + printerMode);
+            switch(printerMode) {
+                case "label":
+                    loadLabel();
+                    break;
+                case "roll":
+                    loadRoll();
+                    break;
+            }
+        }
+
+        toastIt("Searching for printer");
         switch(conn) {
             case BLUETOOTH:
                 BluetoothAdapter bluetoothAdapter = BluetoothAdapter
@@ -151,8 +264,34 @@ public class PrinterManager {
 
                 List<BluetoothDevice> pairedDevices = getPairedBluetoothDevice(bluetoothAdapter);
                 for (BluetoothDevice device : pairedDevices) {
+                    if (device.getName().contains(printerModel)) {
+                        toastIt("Direct Bluetooth: " + printerModel + " " + device.getName());
+                        model = PrinterInfo.Model.valueOf(dashToLower(printerModel));
+                        printer.setBluetooth(BluetoothAdapter.getDefaultAdapter());
+                        info.printerModel = model;
+                        info.port = PrinterInfo.Port.BLUETOOTH;
+                        info.macAddress = device.getAddress();
+                        done = true;
+                        return;
+                    }
+                }
+
+                List<BLEPrinter> bleList = printer.getBLEPrinters(BluetoothAdapter.getDefaultAdapter(), 30);
+                for (BLEPrinter printer: bleList) {
+                    if (printer.localName.contains(printerModel)) {
+                        toastIt("Direct BLE: " + printerModel + " " + printer.localName);
+                        model = PrinterInfo.Model.valueOf(dashToLower(printerModel));
+                        info.port = PrinterInfo.Port.BLE;
+                        info.setLocalName(printer.localName); // Probably wrong.
+                        done = true;
+                        return;
+                    }
+                }
+
+                for (BluetoothDevice device : pairedDevices) {
                     for (int i = 0; i < PRINTERS.length; i++) {
                         if (device.getName().contains((PRINTERS[i]))) {
+                            toastIt("Fallback Bluetooth: " + PRINTERS[i] + " " + device.getName());
                             model = PrinterInfo.Model.valueOf(dashToLower(PRINTERS[i]));
                             printer.setBluetooth(BluetoothAdapter.getDefaultAdapter());
                             printerModel = lowerToDash(model.toString());
@@ -165,11 +304,10 @@ public class PrinterManager {
                     }
                 }
 
-                List<BLEPrinter> bleList = printer.getBLEPrinters(BluetoothAdapter.getDefaultAdapter(), 30);
                 for (BLEPrinter printer: bleList) {
                     for (int i = 0; i < PRINTERS.length; i++) {
-                        System.out.println("BLE: " + printer.localName);
                         if (printer.localName.contains(PRINTERS[i])) {
+                            toastIt("Fallback BLE: " + PRINTERS[i] + " " + printer.localName);
                             model = PrinterInfo.Model.valueOf(dashToLower(PRINTERS[i]));
                             printerModel = lowerToDash(model.toString());
                             info.port = PrinterInfo.Port.BLE;
@@ -184,11 +322,24 @@ public class PrinterManager {
                 done = true;
                 return;
             case WIFI:
+                String name = "Brother " + printerModel;
+                NetPrinter[] printerList = printer.getNetPrinters(name);
+                for (NetPrinter printer: printerList) {
+                    toastIt("Direct WiFi: " + name);
+                    model = PrinterInfo.Model.valueOf(dashToLower(printer.modelName).split("Brother ")[1]);
+                    printerModel = lowerToDash(model.toString());
+                    info.printerModel = model;
+                    info.port = PrinterInfo.Port.NET;
+                    info.ipAddress = printer.ipAddress;
+                    done = true;
+                    return;
+                }
                 for (int i = 0; i < PRINTERS.length; i++) {
-                    NetPrinter[] printerList = printer.getNetPrinters(PRINTERS[i]);
+                    name = "Brother " + PRINTERS[i];
+                    printerList = printer.getNetPrinters(name);
                     for (NetPrinter printer: printerList) {
-                        System.out.println("NET: " + printer.modelName);
-                        model = PrinterInfo.Model.valueOf(printer.modelName);
+                        toastIt("Fallback WiFi: " + name);
+                        model = PrinterInfo.Model.valueOf(dashToLower(printer.modelName).split("Brother ")[1]);
                         printerModel = lowerToDash(model.toString());
                         info.printerModel = model;
                         info.port = PrinterInfo.Port.NET;
@@ -201,15 +352,21 @@ public class PrinterManager {
                 done = true;
                 return;
             case USB:
-                System.out.println("USB: YOLO");
+                toastIt("USB: YOLO");
                 info.port = PrinterInfo.Port.USB; // YOLO. USB-printers?
                 done = true;
                 return;
             default:
-                System.out.println("Default Case");
+                toastIt("Default Case");
                 printer = null; // Error, add nothing.
                 done = true;
                 return;
+        }
+    }
+
+    private static void toastIt(String s) {
+        if (toast) {
+            System.out.println(s);
         }
     }
 

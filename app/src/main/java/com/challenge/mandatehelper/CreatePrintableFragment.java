@@ -43,11 +43,13 @@ public class CreatePrintableFragment extends Fragment {
     }
 
     private void add() {
+        System.out.println("Creating new printable " + getPrintable().getPrintables());
         PrintableItems.add(getPrintable());
         PrintableItems.setSelected(0); //Always gets added at the front.
     }
 
     private void replace() {
+        System.out.println("Replacing printable " + PrintableItems.getSelected() + " " + getPrintable().getPrintables());
         PrintableItem replaced = getPrintable();
         PrintableItems.replace(PrintableItems.getSelected(), replaced);
     }

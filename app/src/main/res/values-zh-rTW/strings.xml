@@ -15,8 +15,8 @@
     
     <string name="choose_printable_text">選擇可打印項目</string>
     <string name="printer_settings_text">打印機設置設置</string>
-    <string name="printer_roll_option_text">卷（DK-2251 /DK-2205）</string>
-    <string name="printer_label_option_text">標籤（DK-1201 /DK-1247）</string>
+    <string name="printer_roll_option_text">卷（DK-2251 / DK-2205 / RD-M01E5 / A4）</string>
+    <string name="printer_label_option_text">標籤（DK-1201 / DK-1247 / RD-M03E1 / LETTER）</string>
     <string name="printer_status_text">未連接打印機</string>
     <string name="create_printable_text">請輸入以下內容</string>
     <string name="printable_name_text">按鈕文字</string>

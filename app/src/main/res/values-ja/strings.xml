@@ -15,8 +15,8 @@
     
     <string name="choose_printable_text">印刷可能なアイテムを選択</string>
     <string name="printer_settings_text">プリンター設定</string>
-    <string name="printer_roll_option_text">ロール（DK-2251 /DK-2205）</string>
-    <string name="printer_label_option_text">ラベル（DK-1201 /DK-1247）</string>
+    <string name="printer_roll_option_text">ロール（DK-2251 / DK-2205 / RD-M01E5 / A4）</string>
+    <string name="printer_label_option_text">ラベル（DK-1201 / DK-1247 / RD-M03E1 / LETTER）</string>
     <string name="printer_status_text">プリンターが接続されていません</string>
     <string name="create_printable_text">以下を入力してください</string>
     <string name="printable_name_text">ボタンのテキスト</string>
