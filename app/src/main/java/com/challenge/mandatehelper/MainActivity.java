@@ -1,6 +1,8 @@
 package com.challenge.mandatehelper;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -9,13 +11,55 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.google.gson.Gson;
+
 public class MainActivity extends AppCompatActivity {
+    protected void loadPrinterPreferences() {
+        SharedPreferences prefs = getApplicationContext()
+                .getSharedPreferences("printer_settings", Context.MODE_PRIVATE);
+        String printer = prefs.getString("printer", null);
+        String raw_connection = prefs.getString("connection", null);
+        PrinterManager.CONNECTION connection = null;
+        if (raw_connection != null && !raw_connection.equals("null")) {
+            connection = PrinterManager.CONNECTION.valueOf(raw_connection);
+        }
+        String mode = prefs.getString("mode", null);
+
+        if(printer != null) {
+            PrinterManager.setModel(printer);
+        }
+
+        if (connection != null) {
+            PrinterManager.setConnection(connection);
+        }
+
+        if (printer != null && connection != null) {
+            PrinterManager.findPrinter(printer, connection);
+        }
+
+        if (mode != null) {
+            switch(mode) {
+                case "label":
+                    PrinterManager.loadLabel();
+                    break;
+                case "roll":
+                    PrinterManager.loadRoll();
+                    break;
+            }
+        }
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        loadPrinterPreferences();
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

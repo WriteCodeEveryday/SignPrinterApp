@@ -13,9 +13,16 @@ import com.brother.ptouch.sdk.NetPrinter;
 import com.brother.ptouch.sdk.Printer;
 import com.brother.ptouch.sdk.PrinterInfo;
 import com.brother.ptouch.sdk.Unit;
+import com.challenge.mandatehelper.R;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -30,17 +37,17 @@ public class PrinterManager {
             "PJ-773" };
 
     private static String[] ROLLS = new String[] {
-            "DK-2251",
-            "DK-2205",
-            "RDQ03U1",
-            "RD-M01E5",
+            "DK-2251 (2.4\")",
+            "DK-2205 (2.4\")",
+            "RDQ03U1 (2\" x 4\")",
+            "RD-M01E5 (4\")",
             "A4", "A4", "A4" };
 
     private static String[] LABELS = new String[] {
-            "DK-1201",
-            "DK-1247",
-            "RDQ01U1",
-            "RD-M03E1",
+            "DK-1201 (1.14\" x 3.5\")",
+            "DK-1247 (4.07\" x 6.4\")",
+            "RDQ01U1 (2\" x 1\")",
+            "RD-M03E1 (4\" x 6\")", // "RD-M06E1"
             "LETTER","LETTER", "LETTER" };
 
     private static PrinterInfo.Model model;
@@ -52,6 +59,7 @@ public class PrinterManager {
     private static CONNECTION printerConn;
 
 
+    private static Context ctx = null;
     private static boolean done = true;
     private static boolean toast = true;
 
@@ -69,6 +77,7 @@ public class PrinterManager {
 
     public static void setModel(String m) {
         printerModel = m;
+        printerMode = null;
     }
 
     public static String[] getSupportedModels () {
@@ -96,41 +105,47 @@ public class PrinterManager {
         return new String[]{};
     }
 
-    private static void setRJ2150Paper(boolean hasHeight) {
+    private static void setRJ2150Paper(boolean isRoll) {
+        info.customPaper = ctx.getFilesDir().getAbsolutePath() + "/rj_2150_";
+        if (isRoll) {
+            info.customPaper += "roll.bin";
+        } else {
+            info.customPaper += "label.bin";
+        }
         info.paperSize = PrinterInfo.PaperSize.CUSTOM;
         info.printMode = PrinterInfo.PrintMode.FIT_TO_PAGE;
-        float width = 58.0f;
-        float margins = 0f;
-        float height;
-
-        if (hasHeight) {
-           height = 116.0f;
-        } else {
-            height = 29.0f;
-        }
-
-        CustomPaperInfo customPaperInfo = CustomPaperInfo.newCustomDiaCutPaper(info.printerModel,
-                Unit.Mm, width, height, margins, margins, margins, margins, 0);
-        info.setCustomPaperInfo(customPaperInfo);
-
     }
 
-    private static void setRJ4250Paper(boolean hasHeight) {
+    private static void setRJ4250Paper(boolean isRoll) {
+        float width = 102.0f;
+        float margins = 0.0f;
+        CustomPaperInfo customPaperInfo;
+        if (isRoll) {
+            customPaperInfo = CustomPaperInfo.newCustomRollPaper(info.printerModel,
+                    Unit.Mm,
+                    width,
+                    margins,
+                    margins,
+                    margins);
+        } else {
+            float height = 152f;
+            customPaperInfo = CustomPaperInfo.newCustomDiaCutPaper(info.printerModel,
+                    Unit.Mm,
+                    width,
+                    height,
+                    margins,
+                    margins,
+                    margins,
+                    margins,
+                    2.5f);
+        }
+        List<Map<CustomPaperInfo.ErrorParameter, CustomPaperInfo.ErrorDetail>> errors = info.setCustomPaperInfo(customPaperInfo);
+        if (errors.isEmpty() == false) {
+            System.out.println(errors.toString());
+            return;
+        }
         info.paperSize = PrinterInfo.PaperSize.CUSTOM;
         info.printMode = PrinterInfo.PrintMode.FIT_TO_PAGE;
-        float width = 102.0f;
-        float margins = 0f;
-        CustomPaperInfo customPaperInfo;
-        if (hasHeight) {
-            float height = 152.0f;
-            customPaperInfo = CustomPaperInfo.newCustomDiaCutPaper(info.printerModel,
-                    Unit.Mm, width, height, margins, margins, margins, margins, 0);
-        } else {
-            customPaperInfo = CustomPaperInfo.newCustomRollPaper(info.printerModel,
-                    Unit.Mm, width, margins, margins, margins);
-        }
-        info.setCustomPaperInfo(customPaperInfo);
-
     }
 
     public static void loadLabel() {
@@ -154,7 +169,7 @@ public class PrinterManager {
                 break;
             case "RJ-4250WB":
             case "RJ_4250WB":
-                setRJ4250Paper(true);
+                setRJ4250Paper(false);
                 break;
             case "PJ-763":
             case "PJ_763":
@@ -167,13 +182,12 @@ public class PrinterManager {
                 break;
 
         }
-        toastIt("Load " + printerMode + " " + info.labelNameIndex + " " + info.paperSize);
+        toastIt("Load " + printerMode + " " + info.labelNameIndex + " " + info.paperSize + " " + info.customPaper);
         printer.setPrinterInfo(info);
     }
 
     public static void loadRoll() {
         printerMode = "roll";
-
         switch (printerModel) {
             case "QL-820NWB":
             case "QL_820NWB":
@@ -193,7 +207,7 @@ public class PrinterManager {
                 break;
             case "RJ-4250WB":
             case "RJ_4250WB":
-                setRJ4250Paper(false);
+                setRJ4250Paper(true);
                 break;
             case "PJ-763":
             case "PJ_763":
@@ -205,7 +219,7 @@ public class PrinterManager {
                 info.printMode = PrinterInfo.PrintMode.FIT_TO_PAGE;
                 break;
         }
-        toastIt("Load " + printerMode + " " + info.labelNameIndex + " " + info.paperSize);
+        toastIt("Load " + printerMode + " " + info.labelNameIndex + " " + info.paperSize + " " + info.customPaper);
         printer.setPrinterInfo(info);
     }
 
@@ -214,7 +228,10 @@ public class PrinterManager {
     }
 
     public static void setWorkingDirectory(Context context) {
-        info.workPath = context.getFilesDir().getAbsolutePath() + "/";
+        ctx = context;
+        raw2file("rj_2150_roll.bin", R.raw.rj_2150_roll);
+        raw2file("rj_2150_label.bin", R.raw.rj_2150_label);
+        info.workPath = ctx.getFilesDir().getAbsolutePath() + "/";
     }
 
     public static String dashToLower(String val) {
@@ -222,6 +239,21 @@ public class PrinterManager {
     }
     public static String lowerToDash(String val) {
         return val.replace("_","-");
+    }
+
+    public static void findNetworkPrinterManually() {
+        done = false;
+        printer = new Printer();
+        info = printer.getPrinterInfo();
+        model = PrinterInfo.Model.valueOf(dashToLower(printerModel));
+    }
+
+    public static void connectNetworkPrinterManually(String ip) {
+        info.printerModel = model;
+        info.port = PrinterInfo.Port.NET;
+        info.ipAddress = ip;
+        printer.setPrinterInfo(info);
+        done = true;
     }
 
     public static void findPrinter(String printer, CONNECTION conn) {
@@ -389,5 +421,35 @@ public class PrinterManager {
         }
 
         return devices;
+    }
+
+    /**
+     * copy from raw in resource
+     */
+    private static void raw2file(String fileName, int fileID) {
+        String path = ctx.getFilesDir().getAbsolutePath() + "/";
+
+        File newdir = new File(path);
+        if (!newdir.exists()) {
+            newdir.mkdir();
+        }
+        File dstFile = new File(path + fileName);
+        if (!dstFile.exists()) {
+            try {
+                InputStream input;
+                OutputStream output;
+                input = ctx.getResources().openRawResource(fileID);
+                output = new FileOutputStream(dstFile);
+                int DEFAULT_BUFFER_SIZE = 1024 * 4;
+                byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+                int n;
+                while (-1 != (n = input.read(buffer))) {
+                    output.write(buffer, 0, n);
+                }
+                input.close();
+                output.close();
+            } catch (IOException ignored) {
+            }
+        }
     }
 }

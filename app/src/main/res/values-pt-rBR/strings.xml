@@ -17,13 +17,13 @@
     <string name="printer_settings_text">Configurações de configuração da impressora</string>
     <string name="printer_roll_option_text">Rolo (DK-2251 / DK-2205 / RD-M01E5 / A4)</string>
     <string name="printer_label_option_text">Etiqueta (DK-1201 / DK-1247 / RD-M03E1 / LETTER)</string>
-    <string name="printer_status_text">Nenhuma impressora conectada</string>
+    <string name="printer_status_text">Nenhuma impressora conectada \nNão tem a impressora? Use USB.</string>
     <string name="create_printable_text">Digite o seguinte</string>
     <string name="printable_name_text">Botão de texto</string>
     <string name="printable_header_text">Texto do cabeçalho</string>
     <string name="printable_warning_text">Texto principal</string>
     <string name="tap_to_preview_text">Toque para atualizar a visualização</string>
-    <string name="print_preview_text">Veja como a impressão será exibida</string>
+    <string name="print_preview_text">Veja como a impressão será exibida \nToque em Visualizar para salvar em um arquivo.</string>
     <string name="use_settings_to_add_printer_text">Use Configurações para adicionar impressora</string>
     <string name="use_settings_to_select_roll_text">Use Configurações para selecionar Rolar</string>
 

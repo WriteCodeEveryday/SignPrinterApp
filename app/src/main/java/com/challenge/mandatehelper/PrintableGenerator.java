@@ -16,8 +16,20 @@ import java.util.Arrays;
 
 public class PrintableGenerator {
     private String file = "";
-    public PrintableGenerator(String printerModel, String printerMode) {
-        file = PrinterManager.dashToLower(printerModel.toLowerCase()) + "_" + printerMode;
+    public PrintableGenerator() {
+        build();
+    }
+
+    private void build() {
+        String printerModel = PrinterManager.getModel();
+        String printerMode = PrinterManager.getMode();
+        if (printerMode != null && printerModel != null) {
+            file = PrinterManager.dashToLower(PrinterManager.getModel().toLowerCase()) + "_" + PrinterManager.getMode();
+        } else if (printerModel != null) {
+            file = PrinterManager.dashToLower(PrinterManager.getModel().toLowerCase()) + "_label";
+        } else {
+            file = PrinterManager.dashToLower(PrinterManager.getSupportedModels()[0].toLowerCase()) + "_label";
+        }
     }
 
     public Bitmap buildOutput(PrintableItem item, Context ctx) {
@@ -47,7 +59,10 @@ public class PrintableGenerator {
 
         //Paints for text and background
         Paint text = new Paint(Paint.ANTI_ALIAS_FLAG);
-        if (PrinterManager.getMode().equals("roll") && PrinterManager.getModel().contains("820")) {
+        if (PrinterManager.getMode() != null &&
+                PrinterManager.getMode().equals("roll") &&
+                PrinterManager.getModel() != null &&
+                PrinterManager.getModel().contains("820")) {
             text.setColor(Color.RED);
         } else {
             text.setColor(Color.BLACK);

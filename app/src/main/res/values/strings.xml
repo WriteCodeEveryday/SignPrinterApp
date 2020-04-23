@@ -15,13 +15,13 @@
     <string name="printer_settings_text">Printer Setup Settings</string>
     <string name="printer_roll_option_text">Roll (DK-2251 / DK-2205 / RD-M01E5 / A4)</string>
     <string name="printer_label_option_text">Label (DK-1201 / DK-1247 / RD-M03E1 / LETTER)</string>
-    <string name="printer_status_text">No Printer Connected</string>
+    <string name="printer_status_text">No Printer Connected\nDon\'t have the printer? Use USB.</string>
     <string name="create_printable_text">Please Enter the Following</string>
     <string name="printable_name_text">Button Text</string>
     <string name="printable_header_text">Header Text</string>
     <string name="printable_warning_text">Main Text</string>
     <string name="tap_to_preview_text">Tap to Refresh Preview</string>
-    <string name="print_preview_text">Here\'s how your printout will appear</string>
+    <string name="print_preview_text">Here\'s how your printout will appear\nTap preview to save to a file.</string>
     <string name="use_settings_to_add_printer_text">Use Settings to add Printer</string>
     <string name="use_settings_to_select_roll_text">Use Settings to select Roll</string>
 

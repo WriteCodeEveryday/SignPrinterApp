@@ -17,13 +17,13 @@
     <string name="printer_settings_text">プリンター設定</string>
     <string name="printer_roll_option_text">ロール（DK-2251 / DK-2205 / RD-M01E5 / A4）</string>
     <string name="printer_label_option_text">ラベル（DK-1201 / DK-1247 / RD-M03E1 / LETTER）</string>
-    <string name="printer_status_text">プリンターが接続されていません</string>
+    <string name="printer_status_text">プリンターが接続されていません\nプリンターがありませんか？ USBを使用します。</string>
     <string name="create_printable_text">以下を入力してください</string>
     <string name="printable_name_text">ボタンのテキスト</string>
     <string name="printable_header_text">ヘッダーテキスト</string>
     <string name="printable_warning_text">本文</string>
     <string name="tap_to_preview_text">タップしてプレビューを更新します</string>
-    <string name="print_preview_text">ここにプリントアウトが表示されます</string>
+    <string name="print_preview_text">ここに\n印刷結果が表示されます。\nプレビューをタップしてファイルに保存します。</string>
     <string name="use_settings_to_add_printer_text">設定を使用してプリンターを追加する</string>
     <string name="use_settings_to_select_roll_text">設定を使用してロールを選択します</string>
 

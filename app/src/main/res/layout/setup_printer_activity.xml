@@ -66,19 +66,19 @@
             android:orientation="vertical">
 
             <RadioButton
-                android:id="@+id/radio_option_roll"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:enabled="false"
-                android:text="@string/printer_roll_option_text"
-                android:visibility="gone" />
-
-            <RadioButton
                 android:id="@+id/radio_option_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:enabled="false"
                 android:text="@string/printer_label_option_text"
+                android:visibility="gone" />
+
+            <RadioButton
+                android:id="@+id/radio_option_roll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:text="@string/printer_roll_option_text"
                 android:visibility="gone" />
         </RadioGroup>
 

@@ -3,7 +3,9 @@ package com.challenge.mandatehelper;
 import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +16,23 @@ import android.widget.TextView;
 
 
 public class SetupPrinterActivity extends Activity {
+    protected void savePrinterPreferences() {
+        SharedPreferences prefs = getApplicationContext()
+                .getSharedPreferences("printer_settings", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        String printer = PrinterManager.getModel();
+        PrinterManager.CONNECTION connection = PrinterManager.getConnection();
+        String mode = PrinterManager.getMode();
+
+        editor.putString("printer", printer);
+        editor.putString("connection", String.valueOf(connection));
+        editor.putString("mode", mode);
+
+
+        editor.commit();
+    }
+
     private void setUpPrinterOptions() {
         String currentModel = PrinterManager.getModel();
         PrinterManager.CONNECTION currentConnection = PrinterManager.getConnection();
@@ -39,6 +58,7 @@ public class SetupPrinterActivity extends Activity {
                 public void onClick(View v) {
                     if (!v.isSelected()) {
                         PrinterManager.setConnection(supportedConnections[j]);
+                        savePrinterPreferences();
                         resetStatus();
                     }
                 }
@@ -61,27 +81,13 @@ public class SetupPrinterActivity extends Activity {
                     if (!v.isSelected()) {
                         PrinterManager.setModel(supportedModels[j]);
                         PrinterManager.setConnection(null);
+                        savePrinterPreferences();
                         setUpPrinterOptions();
                         resetStatus();
                     }
                 }
             });
             printers.addView(button);
-        }
-
-        String currentMode = PrinterManager.getMode();
-        if (currentMode != null) {
-            RadioButton label = this.findViewById(R.id.radio_option_label);
-            RadioButton roll = this.findViewById(R.id.radio_option_roll);
-
-            switch (currentMode) {
-                case "roll":
-                    roll.setChecked(true);
-                    break;
-                case "label":
-                    label.setChecked(true);
-                    break;
-            }
         }
     }
 
@@ -147,6 +153,8 @@ public class SetupPrinterActivity extends Activity {
                         roll.setVisibility(View.VISIBLE);
                         label.setEnabled(true);
                         roll.setEnabled(true);
+                        label.setChecked(false);
+                        roll.setChecked(false);
                     }
                 }
             });
@@ -189,7 +197,9 @@ public class SetupPrinterActivity extends Activity {
                 new Thread() {
                     @Override
                     public void run() {
+                        PrinterManager.setWorkingDirectory(getApplicationContext());
                         PrinterManager.loadLabel();
+                        savePrinterPreferences();
                         updateStatus();
                         finish();
                     }
@@ -203,7 +213,9 @@ public class SetupPrinterActivity extends Activity {
                 new Thread() {
                     @Override
                     public void run() {
+                        PrinterManager.setWorkingDirectory(getApplicationContext());
                         PrinterManager.loadRoll();
+                        savePrinterPreferences();
                         updateStatus();
                         finish();
                     }

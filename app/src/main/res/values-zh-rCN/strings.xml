@@ -17,13 +17,13 @@
     <string name="printer_settings_text">打印机设置设置</string>
     <string name="printer_roll_option_text">卷（DK-2251 / DK-2205 / RD-M01E5 / A4）</string>
     <string name="printer_label_option_text">标签（DK-1201 / DK-1247 / RD-M03E1 / LETTER）</string>
-    <string name="printer_status_text">未连接打印机</string>
+    <string name="printer_status_text">没有连接打印机\n没有打印机？使用USB。</string>
     <string name="create_printable_text">请输入以下内容</string>
     <string name="printable_name_text">按钮文字</string>
     <string name="printable_header_text">标题文本</string>
     <string name="printable_warning_text">正文</string>
     <string name="tap_to_preview_text">点击刷新预览</string>
-    <string name="print_preview_text">这是打印输出的显示方式</string>
+    <string name="print_preview_text">这是打印输出的显示方式\n点击预览以保存到文件。</string>
     <string name="use_settings_to_add_printer_text">使用设置添加打印机</string>
     <string name="use_settings_to_select_roll_text">使用设置选择滚动</string>
 

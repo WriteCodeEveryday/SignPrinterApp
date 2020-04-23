@@ -1,5 +1,7 @@
 package com.challenge.mandatehelper;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,9 +14,24 @@ import android.widget.LinearLayout;
 
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 
 public class SelectPrintableFragment extends Fragment {
+    protected void loadPrintables() {
+        PrintableItems.reset();
+        Gson gson = new Gson();
+        SharedPreferences prefs = getContext()
+                .getSharedPreferences("printable_items", Context.MODE_PRIVATE);
+        int item_count = prefs.getInt("printable_item_count", 0);
+        for (int i = item_count - 1; i >= 0; i--) {
+            String item = prefs.getString("printable_item["+i+"]","");
+            PrintableItem printable = gson.fromJson(item, PrintableItem.class);
+            PrintableItems.add(printable);;
+        }
+    }
+
     private Button size(Button in) {
         Button out = in;
         out.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
@@ -23,6 +40,8 @@ public class SelectPrintableFragment extends Fragment {
     }
 
     public void createFragmentUI() {
+        loadPrintables();
+
         ViewGroup radioParent = getActivity().findViewById(R.id.printable_options);
         Button custom = new Button(getContext());
         custom.setText(getResources().getString(R.string.custom_message_button_text));
