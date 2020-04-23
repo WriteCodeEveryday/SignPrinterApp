@@ -17,13 +17,13 @@
     <string name="printer_settings_text">프린터 설정</string>
     <string name="printer_roll_option_text">롤 (DK-2251 / DK-2205 / RD-M01E5 / A4)</string>
     <string name="printer_label_option_text">라벨 (DK-1201 / DK-1247 / RD-M03E1 / LETTER)</string>
-    <string name="printer_status_text">프린터가 연결되지 않았습니다</string>
+    <string name="printer_status_text">프린터가 연결되지 않았습니다. \n프린터가 없습니까? USB를 사용하십시오.</string>
     <string name="create_printable_text">다음을 입력하십시오</string>
     <string name="printable_name_text">버튼 텍스트</string>
     <string name="printable_header_text">헤더 텍스트</string>
     <string name="printable_warning_text">본문</string>
     <string name="tap_to_preview_text">미리보기를 새로 고침하려면 탭하세요.</string>
-    <string name="print_preview_text">출력물이 표시되는 방법은 다음과 같습니다.</string>
+    <string name="print_preview_text">출력물이 표시되는 방법은 다음과 같습니다. \n파일에 저장하려면 미리보기를 누르십시오.</string>
     <string name="use_settings_to_add_printer_text">설정을 사용하여 프린터 추가</string>
     <string name="use_settings_to_select_roll_text">설정을 사용하여 롤 선택</string>
 

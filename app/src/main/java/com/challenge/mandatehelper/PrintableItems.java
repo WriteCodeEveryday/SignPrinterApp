@@ -1,5 +1,7 @@
 package com.challenge.mandatehelper;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 
 import java.util.ArrayList;
@@ -14,8 +16,8 @@ public class PrintableItems {
     }
 
     public static ArrayList<PrintableItem> getOptions(Resources resources) {
-        defaultHeader = resources.getString(R.string.default_header_printable_text);
         if (options.size() == 0) {
+            defaultHeader = resources.getString(R.string.default_header_printable_text);
             options.add(new PrintableItem(defaultHeader, resources.getString(R.string.social_distancing_warning_text), resources.getString(R.string.social_distancing_button_text)));
             options.add(new PrintableItem(defaultHeader, resources.getString(R.string.customer_limits_warning_text), resources.getString(R.string.customer_limits_button_text)));
             options.add(new PrintableItem(defaultHeader, resources.getString(R.string.wash_hands_warning_text), resources.getString(R.string.wash_hands_button_text)));
@@ -24,6 +26,10 @@ public class PrintableItems {
         }
 
         return options;
+    }
+
+    public static void reset() { // Reset the printables.
+        options = new ArrayList<PrintableItem>();
     }
 
     public static PrintableItem get(int index) {

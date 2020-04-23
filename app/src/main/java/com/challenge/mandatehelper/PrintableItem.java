@@ -18,6 +18,11 @@ public class PrintableItem {
     }
 
     @Override
+    public String toString() {
+        return button + " => " + header + " " + text;
+    }
+
+    @Override
     public boolean equals(@Nullable Object obj) {
         if((obj == null) || (obj.getClass() != this.getClass())) {
             return false;

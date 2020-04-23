@@ -43,13 +43,11 @@ public class CreatePrintableFragment extends Fragment {
     }
 
     private void add() {
-        System.out.println("Creating new printable " + getPrintable().getPrintables());
         PrintableItems.add(getPrintable());
         PrintableItems.setSelected(0); //Always gets added at the front.
     }
 
     private void replace() {
-        System.out.println("Replacing printable " + PrintableItems.getSelected() + " " + getPrintable().getPrintables());
         PrintableItem replaced = getPrintable();
         PrintableItems.replace(PrintableItems.getSelected(), replaced);
     }
@@ -67,50 +65,47 @@ public class CreatePrintableFragment extends Fragment {
             public void run() {
                 final LinearLayout temp = getActivity().findViewById(R.id.create_print_preview_layout);
 
-                if (PrinterManager.getPrinter() != null && PrinterManager.getMode() != null) {
-                    PrintableGenerator pr = new PrintableGenerator(PrinterManager.getModel(), PrinterManager.getMode());
+                PrintableGenerator pr = new PrintableGenerator();
+                PrintableItem item = getPrintable();
 
-                    PrintableItem item = getPrintable();
+                final TextView tapToRefresh = new TextView(getContext());
+                tapToRefresh.setText(getResources().getText(R.string.tap_to_preview_text));
+                tapToRefresh.setTextSize(14);
+                tapToRefresh.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showPreview();
+                    }
+                });
+                tapToRefresh.setGravity(Gravity.CENTER);
 
-                    final TextView tapToRefresh = new TextView(getContext());
-                    tapToRefresh.setText(getResources().getText(R.string.tap_to_preview_text));
-                    tapToRefresh.setTextSize(14);
-                    tapToRefresh.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            showPreview();
-                        }
-                    });
-                    tapToRefresh.setGravity(Gravity.CENTER);
+                final Button buttonPreview = new Button(getContext());
+                buttonPreview.setText(item.getPrintables()[0]);
+                buttonPreview.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showPreview();
+                    }
+                });
 
-                    final Button buttonPreview = new Button(getContext());
-                    buttonPreview.setText(item.getPrintables()[0]);
-                    buttonPreview.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            showPreview();
-                        }
-                    });
-
-                    final ImageView preview = new ImageView(getContext());
-                    preview.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            showPreview();
-                        }
-                    });
-                    final Bitmap output = pr.buildOutput(item, getContext());
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            preview.setImageBitmap(output);
-                            temp.removeAllViews();
-                            temp.addView(buttonPreview);
-                            temp.addView(tapToRefresh);
-                            temp.addView(preview);
-                        }
-                    });
-                }
+                final ImageView preview = new ImageView(getContext());
+                preview.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showPreview();
+                    }
+                });
+                final Bitmap output = pr.buildOutput(item, getContext());
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        preview.setImageBitmap(output);
+                        temp.removeAllViews();
+                        temp.addView(buttonPreview);
+                        temp.addView(tapToRefresh);
+                        temp.addView(preview);
+                    }
+                });
             }
         }.start();
     }
