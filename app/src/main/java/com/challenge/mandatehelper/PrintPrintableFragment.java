@@ -120,6 +120,8 @@ public class PrintPrintableFragment extends Fragment {
                     @Override
                     public void run() {
                         LinearLayout temp = getActivity().findViewById(R.id.print_preview_layout);
+                        temp.removeAllViews();
+
                         ImageView preview = new ImageView(getContext());
                         preview.setImageBitmap(printable);
                         preview.setOnClickListener(new View.OnClickListener() {

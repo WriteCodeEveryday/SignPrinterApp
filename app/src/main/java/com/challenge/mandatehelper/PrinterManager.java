@@ -34,21 +34,23 @@ public class PrinterManager {
             "RJ-4250WB",
             "PJ-763",
             "PJ-763MFi",
-            "PJ-773" };
+            "PJ-773",
+            "MW-260MFi",
+            "MW-145MFi",};
 
     private static String[] ROLLS = new String[] {
             "DK-2251 (2.4\")",
             "DK-2205 (2.4\")",
             "RDQ03U1 (2\" x 4\")",
             "RD-M01E5 (4\")",
-            "A4", "A4", "A4" };
+            "A4", "A4", "A4", "A6", "A7" };
 
     private static String[] LABELS = new String[] {
             "DK-1201 (1.14\" x 3.5\")",
             "DK-1247 (4.07\" x 6.4\")",
             "RDQ01U1 (2\" x 1\")",
             "RD-M03E1 (4\" x 6\")", // "RD-M06E1"
-            "LETTER","LETTER", "LETTER" };
+            "LETTER","LETTER", "LETTER", "A6", "A7" };
 
     private static PrinterInfo.Model model;
     private static PrinterInfo info;
@@ -171,6 +173,16 @@ public class PrinterManager {
             case "RJ_4250WB":
                 setRJ4250Paper(false);
                 break;
+            case "MW-260MFi":
+            case "MW_260MFi":
+                info.paperSize = PrinterInfo.PaperSize.A6;
+                info.printMode = PrinterInfo.PrintMode.FIT_TO_PAGE;
+                break;
+            case "MW-145MFi":
+            case "MW_145MFi":
+                info.paperSize = PrinterInfo.PaperSize.A7;
+                info.printMode = PrinterInfo.PrintMode.FIT_TO_PAGE;
+                break;
             case "PJ-763":
             case "PJ_763":
             case "PJ-763MFi":
@@ -208,6 +220,16 @@ public class PrinterManager {
             case "RJ-4250WB":
             case "RJ_4250WB":
                 setRJ4250Paper(true);
+                break;
+            case "MW-260MFi":
+            case "MW_260MFi":
+                info.paperSize = PrinterInfo.PaperSize.A6;
+                info.printMode = PrinterInfo.PrintMode.FIT_TO_PAGE;
+                break;
+            case "MW-145MFi":
+            case "MW_145MFi":
+                info.paperSize = PrinterInfo.PaperSize.A7;
+                info.printMode = PrinterInfo.PrintMode.FIT_TO_PAGE;
                 break;
             case "PJ-763":
             case "PJ_763":
@@ -296,7 +318,7 @@ public class PrinterManager {
 
                 List<BluetoothDevice> pairedDevices = getPairedBluetoothDevice(bluetoothAdapter);
                 for (BluetoothDevice device : pairedDevices) {
-                    if (device.getName().contains(printerModel)) {
+                    if (device.getName().contains(printerModel.split("MFi")[0])) {
                         toastIt("Direct Bluetooth: " + printerModel + " " + device.getName());
                         model = PrinterInfo.Model.valueOf(dashToLower(printerModel));
                         printer.setBluetooth(BluetoothAdapter.getDefaultAdapter());
@@ -310,7 +332,7 @@ public class PrinterManager {
 
                 List<BLEPrinter> bleList = printer.getBLEPrinters(BluetoothAdapter.getDefaultAdapter(), 30);
                 for (BLEPrinter printer: bleList) {
-                    if (printer.localName.contains(printerModel)) {
+                    if (printer.localName.contains(printerModel.split("MFi")[0])) {
                         toastIt("Direct BLE: " + printerModel + " " + printer.localName);
                         model = PrinterInfo.Model.valueOf(dashToLower(printerModel));
                         info.port = PrinterInfo.Port.BLE;
@@ -322,7 +344,7 @@ public class PrinterManager {
 
                 for (BluetoothDevice device : pairedDevices) {
                     for (int i = 0; i < PRINTERS.length; i++) {
-                        if (device.getName().contains((PRINTERS[i]))) {
+                        if (device.getName().contains(PRINTERS[i].split("MFi")[0])) {
                             toastIt("Fallback Bluetooth: " + PRINTERS[i] + " " + device.getName());
                             model = PrinterInfo.Model.valueOf(dashToLower(PRINTERS[i]));
                             printer.setBluetooth(BluetoothAdapter.getDefaultAdapter());
@@ -338,7 +360,7 @@ public class PrinterManager {
 
                 for (BLEPrinter printer: bleList) {
                     for (int i = 0; i < PRINTERS.length; i++) {
-                        if (printer.localName.contains(PRINTERS[i])) {
+                        if (printer.localName.contains(PRINTERS[i].split("MFi")[0])) {
                             toastIt("Fallback BLE: " + PRINTERS[i] + " " + printer.localName);
                             model = PrinterInfo.Model.valueOf(dashToLower(PRINTERS[i]));
                             printerModel = lowerToDash(model.toString());

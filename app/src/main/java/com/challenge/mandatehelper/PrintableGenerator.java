@@ -34,9 +34,11 @@ public class PrintableGenerator {
 
     public Bitmap buildOutput(PrintableItem item, Context ctx) {
         Resources resources = ctx.getResources();
-        int scale = (int) resources.getDisplayMetrics().density;
+        float scale = 3;//resources.getDisplayMetrics().density;
         int resource = ctx.getResources().getIdentifier(file, "drawable", ctx.getPackageName());
-        Bitmap bitmap = BitmapFactory.decodeResource(resources, resource);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inScaled = false;
+        Bitmap bitmap = BitmapFactory.decodeResource(resources, resource, options);
         android.graphics.Bitmap.Config bitmapConfig = bitmap.getConfig();
         // set default bitmap config if none
         if(bitmapConfig == null) {
@@ -57,6 +59,8 @@ public class PrintableGenerator {
             rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), rotate, true);
         }
 
+        System.out.println("Sizing: " + scale + " => " + bitmap.getHeight() + ":" + rotatedBitmap.getHeight() + " " + bitmap.getWidth() + ":" + rotatedBitmap.getWidth());
+
         //Paints for text and background
         Paint text = new Paint(Paint.ANTI_ALIAS_FLAG);
         if (PrinterManager.getMode() != null &&
@@ -75,7 +79,6 @@ public class PrintableGenerator {
 
         String[] outputs = item.getPrintables();
         Canvas canvas = new Canvas(rotatedBitmap);
-
 
         // draw text to the Canvas center
         Rect bounds = new Rect();
@@ -104,6 +107,8 @@ public class PrintableGenerator {
             canvas.drawRect(generateBackground(bounds, x, y, scale), bg);
             canvas.drawText(outputs[1], x * scale, y * scale, text);
 
+            System.out.println("First Line: " + x + ":" + y);
+
             // draw text slight above Canvas center
             text.setTextSize((int) textCodeDimension / 14);
 
@@ -121,6 +126,7 @@ public class PrintableGenerator {
                 x = (rotatedBitmap.getWidth() - bounds.width())/initX;
                 y = (int) ((rotatedBitmap.getHeight() + bounds.height())/initY);
 
+                System.out.println("Other Lines: " + x + ":" + y);
                 canvas.drawRect(generateBackground(bounds, x, y, scale), bg);
                 canvas.drawText(out[i], x * scale, y * scale, text);
                 initY -= 2;
@@ -136,7 +142,7 @@ public class PrintableGenerator {
         return  rotatedBitmap;
     }
 
-    private Rect generateBackground(Rect bounds, int x, int y, int scale) {
+    private Rect generateBackground(Rect bounds, int x, int y, float scale) {
         Rect background = new Rect(bounds.left, bounds.top, bounds.right, bounds.bottom);
         background.left += x * scale;
         background.right += x * scale;
