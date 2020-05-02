@@ -2,11 +2,9 @@
 
 <img align="right" src="./screenshots/step_2_default_sign.jpg" data-canonical-src="./screenshots/step_2_default_sign.jpg" width="216" height="432"/>
 
-**Making it simpler to use existing Brother label makers for printing signage**
+**Making it simpler to print signage on printers and Brother label makers.**
 
-Sign Printer App supports printing and customizing basic signs to be printed on Brother-based label printers or exported to a regular printer.
-
-Sign Printer App includes some basic signage to allow printing basic signs.
+Sign Printer App supports printing and customizing basic signs to be printed on printers or Brother-based label printers.
 
 # Development Overview
 
