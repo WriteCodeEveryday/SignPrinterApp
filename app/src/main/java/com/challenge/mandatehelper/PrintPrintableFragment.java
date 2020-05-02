@@ -83,7 +83,7 @@ public class PrintPrintableFragment extends Fragment {
         new Thread() {
             @Override
             public void run() {
-                PrintableGenerator pr = new PrintableGenerator();
+                PrintableGenerator pr = new PrintableGenerator(getContext());
                 printable = pr.buildOutput(PrintableItems.getSelected(), getContext());
 
                 getActivity().findViewById(R.id.print_button).setOnClickListener(new View.OnClickListener() {
@@ -173,7 +173,7 @@ public class PrintPrintableFragment extends Fragment {
         SharedPreferences.Editor editor = prefs.edit();
 
 
-        ArrayList<PrintableItem> items =  PrintableItems.getOptions(null);
+        ArrayList<PrintableItem> items =  PrintableItems.getOptions();
         editor.putInt("printable_item_count", items.size());
         for (int i = 0; i < items.size(); i++) {
             PrintableItem item = items.get(i);
@@ -188,7 +188,7 @@ public class PrintPrintableFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_WRITE_IMAGE) {
             if (resultCode == RESULT_OK) {
-                PrintableGenerator pr = new PrintableGenerator();
+                PrintableGenerator pr = new PrintableGenerator(getContext());
                 Bitmap image = pr.buildOutput(PrintableItems.getSelected(), getContext());
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 image.compress(Bitmap.CompressFormat.PNG, 100, stream);

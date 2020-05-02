@@ -4,9 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 
 public class PrintableItems {
+    private static boolean resetDisabled = false;
     private static String defaultHeader = null;
     private static PrintableItem selected = null;
     private static ArrayList<PrintableItem> options = new ArrayList<PrintableItem>();
@@ -15,21 +18,36 @@ public class PrintableItems {
         // No action.
     }
 
-    public static ArrayList<PrintableItem> getOptions(Resources resources) {
-        if (options.size() == 0) {
-            defaultHeader = resources.getString(R.string.default_header_printable_text);
-            options.add(new PrintableItem(defaultHeader, resources.getString(R.string.social_distancing_warning_text), resources.getString(R.string.social_distancing_button_text)));
-            options.add(new PrintableItem(defaultHeader, resources.getString(R.string.customer_limits_warning_text), resources.getString(R.string.customer_limits_button_text)));
-            options.add(new PrintableItem(defaultHeader, resources.getString(R.string.wash_hands_warning_text), resources.getString(R.string.wash_hands_button_text)));
-            options.add(new PrintableItem(defaultHeader, resources.getString(R.string.takeout_service_warning_text), resources.getString(R.string.takeout_service_button_text)));
-            options.add(new PrintableItem(defaultHeader, resources.getString(R.string.staff_only_warning_text), resources.getString(R.string.staff_only_button_text)));
-        }
-
+    public static ArrayList<PrintableItem> getOptions() {
         return options;
     }
 
+    public static void loadDefaults(Resources resources) {
+        defaultHeader = resources.getString(R.string.default_header_printable_text);
+        options.add(new PrintableItem(defaultHeader,
+                        resources.getString(R.string.social_distancing_warning_text),
+                        resources.getString(R.string.social_distancing_button_text)));
+        options.add(new PrintableItem(defaultHeader,
+                        resources.getString(R.string.customer_limits_warning_text),
+                        resources.getString(R.string.customer_limits_button_text)));
+        options.add(new PrintableItem(defaultHeader,
+                        resources.getString(R.string.wash_hands_warning_text),
+                        resources.getString(R.string.wash_hands_button_text)));
+        options.add(new PrintableItem(defaultHeader,
+                        resources.getString(R.string.takeout_service_warning_text),
+                        resources.getString(R.string.takeout_service_button_text)));
+        options.add(new PrintableItem(defaultHeader,
+                        resources.getString(R.string.staff_only_warning_text),
+                        resources.getString(R.string.staff_only_button_text)));
+        resetDisabled = true;
+    }
+
     public static void reset() { // Reset the printables.
-        options = new ArrayList<PrintableItem>();
+        if (!resetDisabled) {
+            options = new ArrayList<PrintableItem>();
+        } else {
+            resetDisabled = !resetDisabled;
+        }
     }
 
     public static PrintableItem get(int index) {
@@ -47,7 +65,9 @@ public class PrintableItems {
     public static PrintableItem getSelected() { return  selected; }
 
     public static void add(PrintableItem item) {
-        options.add(0, item);
+        if (!options.contains(item)) {
+            options.add(0, item);
+        }
     }
 
     public static void replace(PrintableItem current, PrintableItem replaced) {

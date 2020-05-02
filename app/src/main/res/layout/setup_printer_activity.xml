@@ -54,7 +54,9 @@
                 android:id="@+id/connection_selection_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" />
+                android:orientation="horizontal">
+
+            </RadioGroup>
         </LinearLayout>
 
         <RadioGroup
@@ -90,10 +92,21 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/printer_status_text"
+        app:layout_constraintBottom_toTopOf="@+id/load_default"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/printer_options_layout"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/load_default"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:foreground="@android:drawable/ic_menu_add"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/printer_options_layout"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/printer_status_text" />
 
 </android.support.constraint.ConstraintLayout>

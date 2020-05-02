@@ -9,10 +9,12 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.navigation.fragment.NavHostFragment;
 
 
 public class SetupPrinterActivity extends Activity {
@@ -222,6 +224,34 @@ public class SetupPrinterActivity extends Activity {
                 }.start();
             }
         });
+
+        final Button load_defaults = this.findViewById(R.id.load_default);
+        load_defaults.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PrintableItems.loadDefaults(getApplication().getResources());
+                finish();
+            }
+        });
+
+        if (PrintableItems.getOptions().size() == 0) {
+            new Thread(){
+                public void run() {
+                    try {
+                        Thread.sleep(10 * 1000); // wait 10 seconds.
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            load_defaults.setVisibility(View.VISIBLE);
+                        }
+                    });
+                }
+            }.start();
+        }
+
 
         setUpPrinterOptions();
     }

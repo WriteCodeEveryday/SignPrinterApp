@@ -105,6 +105,14 @@
                 android:text="@string/cancel_button" />
 
             <Button
+                android:id="@+id/font_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:enabled="true" />
+
+            <Button
                 android:id="@+id/save_and_print_button"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

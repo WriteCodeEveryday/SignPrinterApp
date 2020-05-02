@@ -65,7 +65,7 @@ public class CreatePrintableFragment extends Fragment {
             public void run() {
                 final LinearLayout temp = getActivity().findViewById(R.id.create_print_preview_layout);
 
-                PrintableGenerator pr = new PrintableGenerator();
+                PrintableGenerator pr = new PrintableGenerator(getContext());
                 PrintableItem item = getPrintable();
 
                 final TextView tapToRefresh = new TextView(getContext());
@@ -139,6 +139,23 @@ public class CreatePrintableFragment extends Fragment {
             public void onClick(View view) {
                 NavHostFragment.findNavController(CreatePrintableFragment.this)
                         .navigate(R.id.action_CancelPrint);
+            }
+        });
+
+
+        if (PrintableGenerator.fontName != null) {
+            ((Button) view.findViewById(R.id.font_button)).setText(PrintableGenerator.fontName);
+        } else {
+            String[] fonts = PrintableGenerator.fonts.keySet().toArray(new String[1]);
+            String font = fonts[fonts.length-1];
+            ((Button) view.findViewById(R.id.font_button)).setText(font);
+        }
+        view.findViewById(R.id.font_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PrintableGenerator.loadNextFont(getContext());
+                ((Button) view.findViewById(R.id.font_button)).setText(PrintableGenerator.fontName);
+                showPreview();
             }
         });
 

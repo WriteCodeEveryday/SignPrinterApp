@@ -8,8 +8,8 @@ android {
         applicationId "com.challenge.mandatehelper"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 9
-        versionName "9-PRODMW"
+        versionCode 10
+        versionName "10-GOOGLE-CENSORSHIP"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

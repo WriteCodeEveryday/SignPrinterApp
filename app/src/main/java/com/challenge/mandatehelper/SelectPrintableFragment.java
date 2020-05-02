@@ -42,11 +42,13 @@ public class SelectPrintableFragment extends Fragment {
     public void createFragmentUI() {
         loadPrintables();
 
-        ViewGroup radioParent = getActivity().findViewById(R.id.printable_options);
+        ViewGroup printableButtons = getActivity().findViewById(R.id.printable_options);
+        printableButtons.removeAllViews();
+
         Button custom = new Button(getContext());
         custom.setText(getResources().getString(R.string.custom_message_button_text));
         custom = size(custom);
-        radioParent.addView(custom); // Need code to allow user to get a custom item added to the list.
+        printableButtons.addView(custom); // Need code to allow user to get a custom item added to the list.
 
         PrintableItems.setSelected(-1); // Reset the selected item... always.
         custom.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +60,8 @@ public class SelectPrintableFragment extends Fragment {
         });
 
 
-        ArrayList<PrintableItem> options = PrintableItems.getOptions(getResources());
+        ArrayList<PrintableItem> options = PrintableItems.getOptions();
+        System.out.println("Printables: " + options.size());
         for (int i = 0; i < options.size(); i++) {
             String[] printables = options.get(i).getPrintables();
             Button item = new Button(getContext());
@@ -76,7 +79,7 @@ public class SelectPrintableFragment extends Fragment {
                 }
             }); // attach a click handler.
 
-            radioParent.addView(item); // attach it to the view.
+            printableButtons.addView(item); // attach it to the view.
         }
     }
 
@@ -87,6 +90,14 @@ public class SelectPrintableFragment extends Fragment {
     ) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.select_printable_fragment, container, false);
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+
+        createFragmentUI();
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {

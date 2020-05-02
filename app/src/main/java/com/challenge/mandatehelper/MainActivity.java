@@ -14,6 +14,8 @@ import android.view.WindowManager;
 import com.google.gson.Gson;
 
 public class MainActivity extends AppCompatActivity {
+    private static final int PRINT_SETUP = 1337;
+
     protected void loadPrinterPreferences() {
         SharedPreferences prefs = getApplicationContext()
                 .getSharedPreferences("printer_settings", Context.MODE_PRIVATE);
@@ -82,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, SetupPrinterActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, PRINT_SETUP);
             return true;
         }
 
